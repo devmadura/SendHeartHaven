@@ -11,6 +11,6 @@ export default async function LibraryPage({
   const resolvedParams = await searchParams;
   const toQuery = typeof resolvedParams?.to === 'string' ? resolvedParams.to : undefined;
   
-  const messages = await getAllMessages(toQuery);
-  return <LibraryView messages={messages} />;
+  const messages = await getAllMessages(toQuery, 1, 10);
+  return <LibraryView initialMessages={messages} searchQuery={toQuery} />;
 }

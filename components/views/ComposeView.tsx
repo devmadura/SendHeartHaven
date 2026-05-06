@@ -2,8 +2,8 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "motion/react";
-import { Search, Music, Send, Loader2 } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
+import { Search, Music, Send, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
 import { submitMessage } from "@/app/actions";
 import Script from "next/script";
 
@@ -22,12 +22,34 @@ export function ComposeView() {
   const [searchResults, setSearchResults] = useState<MusicResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [toast, setToast] = useState<{ show: boolean; type: "success" | "error"; message: string } | null>(null);
+  const [toText, setToText] = useState("");
+  const [contentText, setContentText] = useState("");
+
+  const showToast = (message: string, type: "success" | "error" = "error") => {
+    setToast({ show: true, message, type });
+    setTimeout(() => setToast(null), 3000);
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsSubmitting(true);
     
     const formData = new FormData(e.currentTarget);
+    const to = formData.get("to") as string;
+    const content = formData.get("content") as string;
+
+    if (!to || !to.trim()) {
+      showToast("Tolong isi untuk siapa pesan ini ditujukan, ya.", "error");
+      return;
+    }
+
+    if (!content || !content.trim()) {
+      showToast("Pesan hatimu masih kosong, ceritakanlah sesuatu.", "error");
+      return;
+    }
+
+    setIsSubmitting(true);
+
     if (selectedMusic) {
       formData.append("musicData", JSON.stringify(selectedMusic));
     }
@@ -35,10 +57,13 @@ export function ComposeView() {
     const result = await submitMessage(formData);
     
     if (result.success) {
-      router.push("/library");
+      showToast("Pesanmu berhasil terkirim!", "success");
+      setTimeout(() => {
+        router.push("/library");
+      }, 1500);
     } else {
       console.error(result.error);
-      alert("Gagal mengirim pesan. Silakan coba lagi.");
+      showToast("Gagal mengirim pesan. Silakan coba lagi nanti.", "error");
       setIsSubmitting(false);
     }
   };
@@ -74,13 +99,37 @@ export function ComposeView() {
   }, [searchQuery]);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.98 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.98 }}
-      className="w-full max-w-2xl px-6 py-24 mx-auto relative z-10"
-    >
-      {/* Decorative Accents */}
+    <>
+      {/* Toast Alert */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            className={`fixed top-8 left-1/2 -translate-x-1/2 z-[100] px-6 py-4 rounded-xl shadow-lg border flex items-center gap-3 backdrop-blur-md font-sans tracking-wide ${
+              toast.type === "error" 
+                ? "bg-red-50/90 border-red-200 text-red-800 shadow-red-500/10" 
+                : "bg-stone-50/90 border-tertiary/30 text-on-surface shadow-tertiary/10"
+            }`}
+          >
+            {toast.type === "error" ? (
+              <AlertCircle size={20} className="text-red-500 shrink-0" />
+            ) : (
+              <CheckCircle2 size={20} className="text-tertiary shrink-0" />
+            )}
+            <span className="font-medium text-sm">{toast.message}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <motion.div
+        initial={{ opacity: 0, scale: 0.98 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.98 }}
+        className="w-full max-w-2xl px-6 py-24 mx-auto relative z-10"
+      >
+        {/* Decorative Accents */}
       <div className="absolute -top-12 -left-8 md:-left-16 opacity-40 z-0">
         <img
           src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4yoTfA0SrA3aLIOt_jkUdOqiYrhtFo6ma3qiMxqkGrCmRwhw4D7gy47CSS6DTBd585IScC9gjZPw9l1cMv9AYyRkR_7AdkH_-yJgE4uJrsGr6s2Dha0zBeZ1600e0QKnBtLlcumAp4X7vQJAFux2rf8nV3AleHL_LZ_3kgQ3qLv5LV_dnsLPjKpEsfsip60dRB0e8A8PwfOb4zIguNW0YwTGWxdBiNU_4Nu-BTyRcl0WflBzla-ASoe5sfiNSWefXRKaoRfpRNqg"
@@ -94,7 +143,7 @@ export function ComposeView() {
           Tuliskan Pesan
         </h1>
 
-        <form className="flex flex-col gap-8" onSubmit={handleSubmit}>
+        <form className="flex flex-col gap-8" onSubmit={handleSubmit} noValidate>
           <div className="flex flex-col gap-2">
             <label className="font-sans text-[11px] text-on-surface-variant font-semibold uppercase tracking-[0.2em]">
               Kepada Siapa?
@@ -102,6 +151,8 @@ export function ComposeView() {
             <input
               type="text"
               name="to"
+              value={toText}
+              onChange={(e) => setToText(e.target.value)}
               placeholder="Nama penerima..."
               className="bg-transparent border-0 border-b border-tertiary/30 focus:border-tertiary focus:ring-0 px-0 py-2 text-lg italic transition-colors rounded-none outline-none"
             />
@@ -114,7 +165,8 @@ export function ComposeView() {
             <textarea
               name="content"
               rows={8}
-              required
+              value={contentText}
+              onChange={(e) => setContentText(e.target.value)}
               placeholder="Tuliskan apa yang ada di pikiranmu..."
               className="bg-transparent border-0 border-b border-tertiary/30 focus:border-tertiary focus:ring-0 px-0 py-2 text-lg italic transition-colors resize-none rounded-none outline-none leading-relaxed"
             />
@@ -222,7 +274,7 @@ export function ComposeView() {
             )}
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={!toText.trim() || !contentText.trim() || isSubmitting}
               className="font-sans text-xs font-bold text-secondary border border-secondary px-10 py-4 hover:bg-secondary hover:text-white transition-all uppercase tracking-widest flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
@@ -241,6 +293,7 @@ export function ComposeView() {
       </div>
       
       <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js" strategy="lazyOnload" />
-    </motion.div>
+      </motion.div>
+    </>
   );
 }

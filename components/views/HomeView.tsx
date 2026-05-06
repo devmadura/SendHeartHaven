@@ -58,11 +58,11 @@ export function HomeView({ messages }: { messages: MessageData[] }) {
         >
           <form onSubmit={handleSearch} className="relative flex items-center">
             <Search className="absolute left-4 text-stone-400" size={18} />
-            <input 
-              type="text" 
+            <input
+              type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Cari pesan untuk seseorang..." 
+              placeholder="Cari dengan nama"
               className="w-full bg-white/50 backdrop-blur-sm border border-tertiary/20 focus:border-tertiary focus:ring-0 pl-12 pr-4 py-4 text-lg italic transition-all outline-none rounded-sm shadow-sm placeholder:text-stone-400"
             />
             <button type="submit" className="absolute right-2 bg-stone-900 text-white font-sans text-xs tracking-widest uppercase px-4 py-2 hover:bg-stone-700 transition-colors rounded-sm">

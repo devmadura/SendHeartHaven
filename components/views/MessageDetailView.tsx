@@ -162,7 +162,7 @@ export function MessageDetailView({ message }: { message: MessageData }) {
             </div>
 
             <div className="font-sans text-[10px] uppercase tracking-widest text-[#B3A89B]">
-              {message.date}
+              {message.dateDetail || message.date}
             </div>
           </motion.div>
         </div>

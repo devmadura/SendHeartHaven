@@ -2,6 +2,11 @@
 
 import { supabase } from "@/lib/supabase";
 import { revalidatePath } from "next/cache";
+import { getAllMessages } from "@/lib/data";
+
+export async function loadMoreMessages(searchQuery: string | undefined, page: number) {
+  return await getAllMessages(searchQuery, page, 10);
+}
 
 export async function submitMessage(formData: FormData) {
   const to = formData.get("to") as string;

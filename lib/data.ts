@@ -13,17 +13,33 @@ export interface MessageData {
   };
   author: string;
   date: string;
+  dateDetail?: string;
 }
 
-function formatDate(dateString: string): string {
+function formatLibraryDate(dateString: string): string {
   const date = new Date(dateString);
-  const now = new Date();
-  const diffTime = Math.abs(now.getTime() - date.getTime());
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  const day = date.getDate();
+  const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+  const month = months[date.getMonth()];
+  const year = date.getFullYear();
+  return `${day} ${month} ${year}`;
+}
+
+function formatDetailDate(dateString: string): string {
+  const date = new Date(dateString);
   
-  if (diffDays === 0) return "Hari ini";
-  if (diffDays === 1) return "Kemarin";
-  return `${diffDays} Hari Lalu`;
+  const day = date.getDate();
+  const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+  const month = months[date.getMonth()];
+  const year = date.getFullYear();
+  
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  
+  const offset = -date.getTimezoneOffset() / 60;
+  const offsetStr = offset >= 0 ? `+${offset}` : `${offset}`;
+  
+  return `${day} ${month} ${year}, ${hours}:${minutes} UTC${offsetStr}`;
 }
 
 function mapToMessageData(dbMessage: any): MessageData {
@@ -32,7 +48,8 @@ function mapToMessageData(dbMessage: any): MessageData {
     to: dbMessage.to || undefined,
     content: dbMessage.content,
     author: dbMessage.author || "Anonim",
-    date: formatDate(dbMessage.createdAt),
+    date: formatLibraryDate(dbMessage.createdAt),
+    dateDetail: formatDetailDate(dbMessage.createdAt),
     music: dbMessage.musicId ? {
       id: dbMessage.musicId,
       title: dbMessage.musicTitle,
@@ -54,7 +71,7 @@ export async function getRecentMessages(): Promise<MessageData[]> {
   return data.map(mapToMessageData);
 }
 
-export async function getAllMessages(searchTo?: string): Promise<MessageData[]> {
+export async function getAllMessages(searchTo?: string, page: number = 1, limit: number = 10): Promise<MessageData[]> {
   let query = supabase
     .from("messages")
     .select("*")
@@ -63,6 +80,10 @@ export async function getAllMessages(searchTo?: string): Promise<MessageData[]> 
   if (searchTo) {
     query = query.ilike("to", `%${searchTo}%`);
   }
+  
+  const from = (page - 1) * limit;
+  const to = from + limit - 1;
+  query = query.range(from, to);
     
   const { data } = await query;
     
