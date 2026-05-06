@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { motion } from "motion/react";
 import Link from "next/link";
 import { ArrowLeft, Music, Share2 } from "lucide-react";
+import { SakuraBackground } from "@/components/layout";
 import { MessageData } from "@/lib/data";
 
 export function MessageDetailView({ message }: { message: MessageData }) {
@@ -47,7 +48,15 @@ export function MessageDetailView({ message }: { message: MessageData }) {
         Kembali ke Library
       </Link>
 
-      <div className="bg-[#FCFBF8] border border-[#E6DACD] p-10 md:p-20 relative shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] mt-4 rounded-sm overflow-hidden">
+      {/* Decorative Blur Backgrounds */}
+      <div className="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-rose-100/40 rounded-full blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-stone-200/50 rounded-full blur-[120px]" />
+      </div>
+
+      <SakuraBackground />
+
+      <div className="bg-[#FCFBF8]/80 backdrop-blur-md border border-[#E6DACD]/60 p-10 md:p-20 relative shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] mt-4 rounded-xl overflow-hidden">
         {/* Decorative background quote */}
         <div className="absolute top-4 left-6 md:top-8 md:left-10 text-[120px] font-serif text-[#F2ECE4] leading-none opacity-70 select-none pointer-events-none">
           "

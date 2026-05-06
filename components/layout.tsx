@@ -2,18 +2,32 @@
 
 import { motion } from "motion/react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Home,
   PenLine,
   Book,
+  Search,
 } from "lucide-react";
+import { useState, useEffect } from "react";
 
 export function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const isHome = pathname === "/";
   const isCompose = pathname === "/compose";
   const isLibrary = pathname.startsWith("/library");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/library?to=${encodeURIComponent(searchQuery)}`);
+      setIsSearchOpen(false);
+      setSearchQuery("");
+    }
+  };
 
   return (
     <header className="w-full bg-[#FDFBF7] border-b border-stone-200 sticky top-0 z-40">
@@ -23,7 +37,11 @@ export function Header() {
             SendHeartHaven
           </h1>
         </Link>
-        <nav className="hidden md:flex gap-8">
+        <div className="flex items-center gap-4">
+          <button type="button" onClick={() => setIsSearchOpen(!isSearchOpen)} className="md:hidden text-stone-400 hover:text-stone-600 transition-colors">
+            <Search size={20} />
+          </button>
+          <nav className="hidden md:flex gap-8 items-center">
           <Link href="/">
             <span
               className={`font-sans text-xs tracking-widest uppercase transition-colors cursor-pointer ${isHome ? "text-stone-900 border-b border-stone-900 pb-1" : "text-stone-400 hover:text-stone-600"}`}
@@ -45,8 +63,39 @@ export function Header() {
               Library
             </span>
           </Link>
+          <form onSubmit={handleSearch} className="relative flex items-center ml-2">
+            <input 
+              type="text" 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Cari penerima..." 
+              className={`transition-all duration-300 bg-transparent border-0 border-b border-stone-300 focus:ring-0 focus:border-stone-800 outline-none text-sm font-serif italic ${isSearchOpen ? 'w-48 opacity-100 px-2' : 'w-0 opacity-0 px-0'}`} 
+            />
+            <button type="button" onClick={() => { if(isSearchOpen && searchQuery) handleSearch(new Event('submit') as any); else setIsSearchOpen(!isSearchOpen); }} className="text-stone-400 hover:text-stone-600 transition-colors ml-2">
+              <Search size={16} />
+            </button>
+          </form>
         </nav>
+        </div>
       </div>
+
+      {isSearchOpen && (
+        <div className="md:hidden absolute top-full left-0 w-full p-4 bg-[#FDFBF7]/95 backdrop-blur-md border-b border-stone-200 z-40 shadow-sm animate-in slide-in-from-top-2 fade-in">
+          <form onSubmit={handleSearch} className="flex gap-2 w-full max-w-sm mx-auto">
+            <input 
+              type="text" 
+              value={searchQuery} 
+              onChange={e => setSearchQuery(e.target.value)} 
+              placeholder="Cari nama penerima..." 
+              className="flex-grow bg-white border border-stone-200 px-4 py-3 rounded-full text-sm font-serif italic focus:outline-none focus:border-stone-400 shadow-sm" 
+              autoFocus 
+            />
+            <button type="submit" className="bg-stone-800 text-white px-5 py-2 rounded-full text-xs font-sans tracking-wider uppercase hover:bg-stone-900 transition-colors">
+              Cari
+            </button>
+          </form>
+        </div>
+      )}
     </header>
   );
 }
@@ -156,5 +205,56 @@ export function MessageCard({
         </div>
       </div>
     </motion.article>
+  );
+}
+
+export function SakuraBackground() {
+  const [petals, setPetals] = useState<any[]>([]);
+
+  useEffect(() => {
+    // Generate petals only on client to prevent hydration mismatch
+    const newPetals = Array.from({ length: 25 }).map((_, i) => ({
+      id: i,
+      left: Math.random() * 100,
+      scale: Math.random() * 0.6 + 0.4,
+      rotation: Math.random() * 360,
+      duration: Math.random() * 15 + 15,
+      delay: Math.random() * -20, // Negative delay so they start immediately at different points
+      xDrift: Math.random() * 30 - 15,
+    }));
+    setPetals(newPetals);
+  }, []);
+
+  if (petals.length === 0) return null;
+
+  return (
+    <div className="fixed inset-0 overflow-hidden pointer-events-none -z-[5]">
+      {petals.map((petal) => (
+        <motion.div
+          key={petal.id}
+          className="absolute w-3 h-4 bg-rose-200/60 blur-[3px]"
+          style={{
+            left: `${petal.left}vw`,
+            top: `-5vh`,
+            borderTopLeftRadius: "50%",
+            borderTopRightRadius: "0%",
+            borderBottomRightRadius: "50%",
+            borderBottomLeftRadius: "50%",
+            transformOrigin: "bottom center",
+          }}
+          animate={{
+            y: ["0vh", "110vh"],
+            x: [`0vw`, `${petal.xDrift}vw`],
+            rotate: [petal.rotation, petal.rotation + 360],
+          }}
+          transition={{
+            duration: petal.duration,
+            repeat: Infinity,
+            ease: "linear",
+            delay: petal.delay,
+          }}
+        />
+      ))}
+    </div>
   );
 }
