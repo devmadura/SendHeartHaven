@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { Search, Music, Send, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
-import { SakuraBackground } from "@/components/layout";
+
 import { submitMessage } from "@/app/actions";
 import Script from "next/script";
 
@@ -124,11 +124,11 @@ export function ComposeView() {
       </AnimatePresence>
 
       <div className="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-rose-100/40 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-stone-200/50 rounded-full blur-[120px]" />
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-tertiary/20 rounded-full blur-[120px] transition-colors duration-1000" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/20 rounded-full blur-[120px] transition-colors duration-1000" />
       </div>
 
-      <SakuraBackground />
+
 
       <motion.div
         initial={{ opacity: 0, scale: 0.98 }}
@@ -136,7 +136,7 @@ export function ComposeView() {
         exit={{ opacity: 0, scale: 0.98 }}
         className="w-full max-w-2xl px-6 py-24 mx-auto relative z-10"
       >
-        <div className="bg-white/40 backdrop-blur-md border border-white/60 p-8 md:p-16 relative z-10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] rounded-2xl">
+        <div className="bg-surface-container-low/60 backdrop-blur-md border border-outline/30 p-8 md:p-16 relative z-10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] rounded-2xl">
           <div className="text-center flex flex-col gap-6 items-center relative mb-12">
             <motion.img
               initial={{ opacity: 0, scale: 0.9 }}
@@ -146,13 +146,13 @@ export function ComposeView() {
               className="w-16 h-16 object-cover grayscale opacity-60 botanical-blend"
               alt="Decorative flower"
             />
-            <h1 className="text-3xl md:text-5xl text-on-surface font-serif italic tracking-wide text-stone-800">
+            <h1 className="text-3xl md:text-5xl text-on-surface font-serif italic tracking-wide">
               Tuliskan Isi Hatimu
             </h1>
-            <p className="font-sans text-xs md:text-sm tracking-[0.2em] uppercase text-stone-400">
+            <p className="font-sans text-xs md:text-sm tracking-[0.2em] uppercase text-on-surface-variant">
               Sampaikan apa yang tak sempat terucap
             </p>
-            <div className="w-12 h-[1px] bg-stone-300 mt-2" />
+            <div className="w-12 h-[1px] bg-outline-variant mt-2" />
           </div>
 
           <form className="flex flex-col gap-8" onSubmit={handleSubmit} noValidate>
@@ -204,10 +204,10 @@ export function ComposeView() {
 
               <div className="flex flex-col gap-2">
                 {isSearching && (
-                  <div className="text-sm text-stone-500 italic py-2">Mencari...</div>
+                  <div className="text-sm text-on-surface-variant italic py-2">Mencari...</div>
                 )}
                 {!isSearching && searchResults.length === 0 && searchQuery.trim() !== "" && (
-                  <div className="text-sm text-stone-500 italic py-2">Tidak ditemukan.</div>
+                  <div className="text-sm text-on-surface-variant italic py-2">Tidak ditemukan.</div>
                 )}
 
                 {/* Show selected music at top if not searching or if it's the only one */}
@@ -232,7 +232,7 @@ export function ComposeView() {
                         {selectedMusic.artist}
                       </p>
                     </div>
-                    <div className="text-xs text-stone-400 hover:text-stone-600">Hapus</div>
+                    <div className="text-xs text-on-surface-variant hover:text-on-surface">Hapus</div>
                   </button>
                 )}
 
@@ -241,7 +241,7 @@ export function ComposeView() {
                     key={song.id}
                     type="button"
                     onClick={() => setSelectedMusic(song)}
-                    className={`flex items-center gap-4 p-3 rounded transition-colors text-left border ${selectedMusic?.id === song.id ? "bg-surface-container-low border-tertiary/20" : "hover:bg-surface-container-lowest border-transparent"}`}
+                    className={`flex items-center gap-4 p-3 rounded transition-colors text-left border ${selectedMusic?.id === song.id ? "bg-surface-container-low border-tertiary/20" : "hover:bg-surface-container/50 border-transparent"}`}
                   >
                     <div className="w-10 h-10 bg-surface-container-highest flex items-center justify-center text-outline-variant rounded overflow-hidden">
                       {song.artworkUrl ? (
@@ -287,7 +287,7 @@ export function ComposeView() {
               <button
                 type="submit"
                 disabled={!toText.trim() || !contentText.trim() || isSubmitting}
-                className="font-sans text-xs font-medium text-stone-500 bg-white/50 backdrop-blur-sm border border-stone-200/80 px-10 py-4 hover:bg-stone-900 hover:text-white hover:border-stone-900 transition-all duration-300 uppercase tracking-widest flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed rounded-full shadow-sm hover:shadow-md"
+                className="font-sans text-xs font-medium text-on-surface bg-surface-container/50 backdrop-blur-sm border border-outline/50 px-10 py-4 hover:bg-on-surface hover:text-surface hover:border-on-surface transition-all duration-300 uppercase tracking-widest flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed rounded-full shadow-sm hover:shadow-md"
               >
                 {isSubmitting && <Loader2 size={14} className="animate-spin" />}
                 {isSubmitting ? "Menerbangkan Pesan..." : "Bagikan Pesan"}

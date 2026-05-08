@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import { motion } from "motion/react";
 import Link from "next/link";
 import { ArrowLeft, Music, Share2 } from "lucide-react";
-import { SakuraBackground } from "@/components/layout";
+
 import { MessageData } from "@/lib/data";
 
 export function MessageDetailView({ message }: { message: MessageData }) {
@@ -43,22 +43,22 @@ export function MessageDetailView({ message }: { message: MessageData }) {
       exit={{ opacity: 0, scale: 0.98 }}
       className="w-full max-w-2xl px-6 py-24 mx-auto relative z-10 flex flex-col gap-8"
     >
-      <Link href="/library" className="inline-flex items-center gap-2 text-stone-500 hover:text-stone-900 transition-colors w-fit font-sans text-xs uppercase tracking-widest">
+      <Link href="/library" className="inline-flex items-center gap-2 text-on-surface-variant hover:text-on-surface transition-colors w-fit font-sans text-xs uppercase tracking-widest">
         <ArrowLeft size={14} />
         Kembali ke Library
       </Link>
 
       {/* Decorative Blur Backgrounds */}
       <div className="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-rose-100/40 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-stone-200/50 rounded-full blur-[120px]" />
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-tertiary/20 rounded-full blur-[120px] transition-colors duration-1000" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/20 rounded-full blur-[120px] transition-colors duration-1000" />
       </div>
 
-      <SakuraBackground />
 
-      <div className="bg-[#FCFBF8]/80 backdrop-blur-md border border-[#E6DACD]/60 p-10 md:p-20 relative shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] mt-4 rounded-xl overflow-hidden">
+
+      <div className="bg-surface-container-low/60 backdrop-blur-md border border-outline/30 p-6 sm:p-10 md:p-20 relative shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] mt-4 rounded-xl overflow-hidden">
         {/* Decorative background quote */}
-        <div className="absolute top-4 left-6 md:top-8 md:left-10 text-[120px] font-serif text-[#F2ECE4] leading-none opacity-70 select-none pointer-events-none">
+        <div className="absolute top-4 left-6 md:top-8 md:left-10 text-[80px] md:text-[120px] font-serif text-surface-container-highest leading-none opacity-70 select-none pointer-events-none">
           "
         </div>
 
@@ -101,7 +101,7 @@ export function MessageDetailView({ message }: { message: MessageData }) {
                 {message.music.previewUrl && (
                   <button 
                     onClick={togglePlay}
-                    className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center flex-shrink-0 hover:scale-105 active:scale-95 transition-all shadow-md"
+                    className="w-12 h-12 rounded-full bg-white text-black flex items-center justify-center flex-shrink-0 hover:scale-105 active:scale-95 transition-all shadow-md"
                   >
                     {isPlaying ? (
                       <div className="w-3 h-3 flex gap-1 justify-center items-center">
@@ -140,9 +140,9 @@ export function MessageDetailView({ message }: { message: MessageData }) {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.8 }}
-              className="font-sans text-[10px] uppercase tracking-[0.3em] text-[#8C8276] border-b border-[#E6DACD]/50 pb-6 text-center"
+              className="font-sans text-[10px] uppercase tracking-[0.3em] text-on-surface-variant border-b border-outline/50 pb-6 text-center"
             >
-              <span className="text-[#C4B8A9]">UNTUK:</span> {message.to}
+              <span className="text-outline-variant">UNTUK:</span> {message.to}
             </motion.div>
           )}
 
@@ -150,7 +150,7 @@ export function MessageDetailView({ message }: { message: MessageData }) {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.8 }}
-            className="font-serif text-2xl md:text-3xl leading-relaxed md:leading-[1.8] text-[#4A443E] italic text-center px-4 md:px-12 whitespace-pre-wrap"
+            className="font-serif text-2xl md:text-3xl leading-relaxed md:leading-[1.8] text-on-surface italic text-center px-4 md:px-12 whitespace-pre-wrap"
           >
             {message.content}
           </motion.div>
@@ -159,18 +159,18 @@ export function MessageDetailView({ message }: { message: MessageData }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.7, duration: 1 }}
-            className="flex flex-col items-center gap-6 pt-12 border-t border-[#E6DACD]/50"
+            className="flex flex-col items-center gap-6 pt-12 border-t border-outline/50"
           >
             <div className="flex flex-col items-center gap-2">
-              <span className="font-sans text-[9px] uppercase tracking-[0.2em] text-[#C4B8A9]">
+              <span className="font-sans text-[9px] uppercase tracking-[0.2em] text-outline-variant">
                 Dari
               </span>
-              <span className="font-serif text-xl md:text-2xl text-[#5C544D]">
+              <span className="font-serif text-xl md:text-2xl text-on-surface">
                 {message.author}
               </span>
             </div>
 
-            <div className="font-sans text-[10px] uppercase tracking-widest text-[#B3A89B]">
+            <div className="font-sans text-[10px] uppercase tracking-widest text-on-surface-variant">
               {message.dateDetail || message.date}
             </div>
           </motion.div>
@@ -196,7 +196,7 @@ export function MessageDetailView({ message }: { message: MessageData }) {
               alert("Tautan berhasil disalin!");
             }
           }}
-          className="flex items-center gap-2 font-sans text-xs font-bold text-stone-500 hover:text-stone-800 transition-colors uppercase tracking-widest"
+          className="flex items-center gap-2 font-sans text-xs font-bold text-on-surface-variant hover:text-on-surface transition-colors uppercase tracking-widest"
         >
           <Share2 size={16} />
           Bagikan

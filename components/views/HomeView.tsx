@@ -57,15 +57,15 @@ export function HomeView({ messages }: { messages: MessageData[] }) {
           className="pt-6 w-full max-w-md"
         >
           <form onSubmit={handleSearch} className="relative flex items-center">
-            <Search className="absolute left-4 text-stone-400" size={18} />
+            <Search className="absolute left-4 text-on-surface-variant" size={18} />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Cari dengan nama"
-              className="w-full bg-white/50 backdrop-blur-sm border border-tertiary/20 focus:border-tertiary focus:ring-0 pl-12 pr-4 py-4 text-lg italic transition-all outline-none rounded-sm shadow-sm placeholder:text-stone-400"
+              className="w-full bg-surface-container/50 backdrop-blur-sm border border-outline focus:border-on-surface focus:ring-0 pl-12 pr-4 py-4 text-lg italic transition-all outline-none rounded-sm shadow-sm placeholder:text-on-surface-variant"
             />
-            <button type="submit" className="absolute right-2 bg-stone-900 text-white font-sans text-xs tracking-widest uppercase px-4 py-2 hover:bg-stone-700 transition-colors rounded-sm">
+            <button type="submit" className="absolute right-2 bg-on-surface text-surface font-sans text-xs tracking-widest uppercase px-4 py-2 hover:opacity-80 transition-opacity rounded-sm">
               Cari
             </button>
           </form>
@@ -78,7 +78,7 @@ export function HomeView({ messages }: { messages: MessageData[] }) {
           className="pt-4"
         >
           <Link href="/compose">
-            <button className="font-sans text-xs font-semibold uppercase tracking-widest text-stone-500 border-b border-stone-300 pb-1 hover:text-stone-900 hover:border-stone-900 transition-all">
+            <button className="font-sans text-xs font-semibold uppercase tracking-widest text-on-surface-variant border-b border-outline pb-1 hover:text-on-surface hover:border-on-surface transition-all">
               Atau tulis pesan baru
             </button>
           </Link>

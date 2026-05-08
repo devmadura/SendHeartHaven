@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { MessageCard, SakuraBackground } from "@/components/layout";
+import { MessageCard } from "@/components/layout";
 import { MessageData } from "@/lib/data";
 import { loadMoreMessages } from "@/app/actions";
 import { Loader2, SearchX } from "lucide-react";
@@ -38,11 +38,11 @@ export function LibraryView({ initialMessages, searchQuery }: { initialMessages:
     >
       {/* Decorative Blur Backgrounds */}
       <div className="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-rose-100/40 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-stone-200/50 rounded-full blur-[120px]" />
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-tertiary/20 rounded-full blur-[120px] transition-colors duration-1000" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/20 rounded-full blur-[120px] transition-colors duration-1000" />
       </div>
 
-      <SakuraBackground />
+
 
       <div className="text-center flex flex-col gap-6 items-center relative">
         <motion.img
@@ -53,25 +53,25 @@ export function LibraryView({ initialMessages, searchQuery }: { initialMessages:
           className="w-20 h-20 object-cover grayscale opacity-60 botanical-blend"
           alt="Decorative flower"
         />
-        <h1 className="text-4xl md:text-6xl text-on-surface font-serif italic tracking-wide text-stone-800">
+        <h1 className="text-4xl md:text-6xl text-on-surface font-serif italic tracking-wide">
           Heart Library
         </h1>
-        <p className="font-sans text-xs md:text-sm tracking-[0.3em] uppercase text-stone-400">
+        <p className="font-sans text-xs md:text-sm tracking-[0.3em] uppercase text-on-surface-variant">
           Kumpulan Pesan yang Diabadikan
         </p>
-        <div className="w-12 h-[1px] bg-stone-300 mt-2" />
+        <div className="w-12 h-[1px] bg-outline-variant mt-2" />
       </div>
 
       {messages.length === 0 ? (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col items-center justify-center py-20 text-stone-400 gap-4"
+          className="flex flex-col items-center justify-center py-20 text-on-surface-variant gap-4"
         >
           <SearchX size={48} strokeWidth={1} />
           <p className="font-serif italic text-lg text-center">Belum ada pesan yang tertulis di sini.</p>
           <Link href="/compose">
-            <span className="font-sans text-xs font-bold text-stone-500 border-b border-stone-300 pb-1 mt-4 hover:text-stone-800 transition-colors uppercase tracking-widest">
+            <span className="font-sans text-xs font-bold text-on-surface-variant border-b border-outline pb-1 mt-4 hover:text-on-surface transition-colors uppercase tracking-widest">
               Tulis Pesan Pertama
             </span>
           </Link>
@@ -90,7 +90,7 @@ export function LibraryView({ initialMessages, searchQuery }: { initialMessages:
                     content={msg.content}
                     author={msg.author}
                     date={msg.date}
-                    className="h-full bg-white/40 backdrop-blur-md border-white/60 hover:bg-white/80 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] hover:-translate-y-1 transition-all duration-500 ease-out"
+                    className="h-full bg-surface-container-low/60 backdrop-blur-md border-outline/30 hover:bg-surface-container-high/80 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] hover:-translate-y-1 transition-all duration-500 ease-out"
                   />
                 </div>
               </Link>
@@ -104,7 +104,7 @@ export function LibraryView({ initialMessages, searchQuery }: { initialMessages:
           <button
             onClick={handleLoadMore}
             disabled={isLoading}
-            className="font-sans text-xs font-medium text-stone-500 bg-white/50 backdrop-blur-sm border border-stone-200/80 px-10 py-4 hover:bg-stone-900 hover:text-white hover:border-stone-900 transition-all duration-300 uppercase tracking-widest flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed rounded-full shadow-sm hover:shadow-md"
+            className="font-sans text-xs font-medium text-on-surface bg-surface-container/50 backdrop-blur-sm border border-outline/50 px-10 py-4 hover:bg-on-surface hover:text-surface transition-all duration-300 uppercase tracking-widest flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed rounded-full shadow-sm hover:shadow-md"
           >
             {isLoading && <Loader2 size={14} className="animate-spin" />}
             {isLoading ? "Membuka Lembaran..." : "Lihat Pesan Lainnya"}
