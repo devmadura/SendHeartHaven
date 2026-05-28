@@ -3,6 +3,7 @@
 import { supabase } from "@/lib/supabase";
 import { revalidatePath } from "next/cache";
 import { getAllMessages } from "@/lib/data";
+import { checkBadWords } from "@/lib/badwords";
 
 export async function loadMoreMessages(searchQuery: string | undefined, page: number) {
   return await getAllMessages(searchQuery, page, 10);
@@ -12,6 +13,18 @@ export async function submitMessage(formData: FormData) {
   const to = formData.get("to") as string;
   const content = formData.get("content") as string;
   const author = formData.get("author") as string;
+
+  // Bad words validation
+  const toCheck = checkBadWords(to);
+  const contentCheck = checkBadWords(content);
+  const authorCheck = checkBadWords(author);
+
+  if (toCheck.hasBadWords || contentCheck.hasBadWords || authorCheck.hasBadWords) {
+    return {
+      success: false,
+      error: "Pesan Anda mengandung kata-kata yang tidak diperbolehkan. Mari gunakan tutur kata yang baik."
+    };
+  }
   
   // Music data is passed as a serialized JSON string
   const musicDataStr = formData.get("musicData") as string;

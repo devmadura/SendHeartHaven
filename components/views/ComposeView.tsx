@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Search, Music, Send, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
 
 import { submitMessage } from "@/app/actions";
+import { checkBadWords } from "@/lib/badwords";
 import Script from "next/script";
 
 interface MusicResult {
@@ -46,6 +47,17 @@ export function ComposeView() {
 
     if (!content || !content.trim()) {
       showToast("Pesan hatimu masih kosong, ceritakanlah sesuatu.", "error");
+      return;
+    }
+
+    const author = formData.get("author") as string;
+
+    const toCheck = checkBadWords(to);
+    const contentCheck = checkBadWords(content);
+    const authorCheck = checkBadWords(author);
+
+    if (toCheck.hasBadWords || contentCheck.hasBadWords || authorCheck.hasBadWords) {
+      showToast("Pesan Anda mengandung kata-kata yang tidak diperbolehkan. Mari gunakan tutur kata yang baik.", "error");
       return;
     }
 
