@@ -13,6 +13,7 @@ export async function submitMessage(formData: FormData) {
   const to = formData.get("to") as string;
   const content = formData.get("content") as string;
   const author = formData.get("author") as string;
+  const mood = formData.get("mood") as string;
 
   // Bad words validation
   const toCheck = checkBadWords(to);
@@ -69,6 +70,7 @@ export async function submitMessage(formData: FormData) {
     {
       to: to || null,
       content,
+      mood: mood || "soft",
       author: author || "Anonim",
       musicId: musicData?.id || null,
       musicTitle: musicData?.title || null,

@@ -155,8 +155,14 @@ export function MessageDetailView({ message }: { message: MessageData }) {
         ))}
       </div>
 
-      {/* Decorative Glow Spot behind the card */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl h-96 bg-gradient-to-tr from-tertiary/5 via-primary/5 to-secondary/5 rounded-full blur-[140px] pointer-events-none -z-20" />
+      {/* Decorative Glow Spot behind the card, responsive to letter mood */}
+      <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl h-96 bg-gradient-to-tr ${
+        message.mood === "romantic" ? "from-rose-500/10 via-rose-500/5 to-transparent" :
+        message.mood === "nostalgic" ? "from-amber-500/10 via-amber-500/5 to-transparent" :
+        message.mood === "midnight" ? "from-indigo-500/10 via-indigo-500/5 to-transparent" :
+        message.mood === "healing" ? "from-teal-500/10 via-teal-500/5 to-transparent" :
+        "from-tertiary/10 via-primary/5 to-transparent"
+      } rounded-full blur-[140px] pointer-events-none -z-20`} />
 
       {/* Top Navigation Back Button */}
       <motion.div 
@@ -198,6 +204,11 @@ export function MessageDetailView({ message }: { message: MessageData }) {
           }}
           className="floating-letter-card w-full rounded-[24px] p-8 sm:p-12 md:p-16 relative flex flex-col justify-between overflow-hidden group"
         >
+          {/* Subtle Mood Tint Overlay */}
+          {message.mood === "romantic" && <div className="absolute inset-0 bg-rose-400/[0.015] pointer-events-none -z-10" />}
+          {message.mood === "nostalgic" && <div className="absolute inset-0 bg-amber-400/[0.015] pointer-events-none -z-10" />}
+          {message.mood === "midnight" && <div className="absolute inset-0 bg-indigo-400/[0.015] pointer-events-none -z-10" />}
+          {message.mood === "healing" && <div className="absolute inset-0 bg-teal-400/[0.015] pointer-events-none -z-10" />}
           {/* Subtle Hover Spotlight Glow */}
           {isHovered && (
             <div 

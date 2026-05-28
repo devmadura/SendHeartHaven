@@ -4,6 +4,7 @@ export interface MessageData {
   id: string;
   to?: string;
   content: string;
+  mood?: string;
   music?: {
     id: string;
     title: string;
@@ -47,6 +48,7 @@ function mapToMessageData(dbMessage: any): MessageData {
     id: dbMessage.id,
     to: dbMessage.to || undefined,
     content: dbMessage.content,
+    mood: dbMessage.mood || undefined,
     author: dbMessage.author || "Anonim",
     date: formatLibraryDate(dbMessage.createdAt),
     dateDetail: formatDetailDate(dbMessage.createdAt),
@@ -78,7 +80,13 @@ export async function getAllMessages(searchTo?: string, page: number = 1, limit:
     .order("createdAt", { ascending: false });
     
   if (searchTo) {
-    query = query.ilike("to", `%${searchTo}%`);
+    const lowerSearch = searchTo.toLowerCase();
+    const isMood = ["romantic", "nostalgic", "midnight", "healing", "soft"].includes(lowerSearch);
+    if (isMood) {
+      query = query.eq("mood", lowerSearch);
+    } else {
+      query = query.ilike("to", `%${searchTo}%`);
+    }
   }
   
   const from = (page - 1) * limit;
