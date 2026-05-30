@@ -3,8 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion } from "motion/react";
 import Link from "next/link";
-import { ArrowLeft, Music, Share2 } from "lucide-react";
-
+import { ArrowLeft, Music, Share2, Heart, Sparkles, Coffee, Moon, Feather } from "lucide-react";
 import { MessageData } from "@/lib/data";
 
 export function MessageDetailView({ message }: { message: MessageData }) {
@@ -25,13 +24,13 @@ export function MessageDetailView({ message }: { message: MessageData }) {
   const [particles, setParticles] = useState<any[]>([]);
 
   useEffect(() => {
-    const newParticles = Array.from({ length: 15 }).map((_, i) => ({
+    const newParticles = Array.from({ length: 18 }).map((_, i) => ({
       id: i,
       left: Math.random() * 100,
       bottom: Math.random() * 30,
-      size: Math.random() * 3 + 2,
-      duration: Math.random() * 10 + 10,
-      delay: Math.random() * -12,
+      size: Math.random() * 3 + 1.5,
+      duration: Math.random() * 12 + 10,
+      delay: Math.random() * -10,
       xDrift: Math.random() * 30 - 15,
     }));
     setParticles(newParticles);
@@ -105,8 +104,8 @@ export function MessageDetailView({ message }: { message: MessageData }) {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.2,
+        staggerChildren: 0.15,
+        delayChildren: 0.1,
       }
     }
   };
@@ -118,7 +117,7 @@ export function MessageDetailView({ message }: { message: MessageData }) {
       y: 0,
       transition: {
         duration: 1.2,
-        ease: [0.16, 1, 0.3, 1] as any // Poetic calm ease-out
+        ease: [0.16, 1, 0.3, 1] as any
       }
     }
   };
@@ -127,13 +126,14 @@ export function MessageDetailView({ message }: { message: MessageData }) {
   const paragraphs = message.content.split(/\n\n+/).filter(p => p.trim());
 
   return (
-    <div className="w-full min-h-[92vh] flex flex-col justify-center items-center py-16 px-4 md:px-8 relative select-none md:select-text overflow-hidden">
+    <div className="w-full min-h-[85vh] flex flex-col justify-center items-center py-8 sm:py-16 px-4 md:px-8 relative overflow-hidden select-text">
+      
       {/* Background Particles behind the card but in front of environment */}
       <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden">
         {particles.map((p) => (
           <motion.div
             key={p.id}
-            className="absolute rounded-full bg-tertiary/15 dark:bg-tertiary/30 pointer-events-none blur-[1px]"
+            className="absolute rounded-full bg-tertiary/15 dark:bg-tertiary/25 pointer-events-none blur-[1px]"
             style={{
               left: `${p.left}%`,
               bottom: `${p.bottom}%`,
@@ -162,33 +162,33 @@ export function MessageDetailView({ message }: { message: MessageData }) {
         message.mood === "midnight" ? "from-indigo-500/10 via-indigo-500/5 to-transparent" :
         message.mood === "healing" ? "from-teal-500/10 via-teal-500/5 to-transparent" :
         "from-tertiary/10 via-primary/5 to-transparent"
-      } rounded-full blur-[140px] pointer-events-none -z-20`} />
+      } rounded-full blur-[140px] pointer-events-none -z-20 ambient-glowing-light`} />
 
       {/* Top Navigation Back Button */}
       <motion.div 
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="w-full max-w-3xl mb-8"
+        className="w-full max-w-2xl mb-6 text-left"
       >
         <Link 
           href="/library" 
-          className="inline-flex items-center gap-2 text-on-surface-variant/75 hover:text-on-surface transition-colors font-sans text-xs uppercase tracking-widest"
+          className="inline-flex items-center gap-2 text-on-surface-variant/70 hover:text-on-surface transition-colors font-sans text-[10px] uppercase tracking-widest border border-outline-variant/20 px-4 py-2 rounded-full bg-surface/40 backdrop-blur-sm"
         >
-          <ArrowLeft size={13} />
+          <ArrowLeft size={12} />
           Kembali ke Library
         </Link>
       </motion.div>
 
       {/* Floating Idle Wrapper */}
       <motion.div
-        animate={{ y: [0, -8, 0] }}
+        animate={{ y: [0, -6, 0] }}
         transition={{
-          duration: 6,
+          duration: 7,
           repeat: Infinity,
           ease: "easeInOut"
         }}
-        className="w-full max-w-3xl"
+        className="w-full max-w-2xl"
       >
         {/* Interactive Parallax Card */}
         <div
@@ -198,60 +198,69 @@ export function MessageDetailView({ message }: { message: MessageData }) {
           style={{
             transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
             boxShadow: isHovered 
-              ? `${shadowX}px ${shadowY}px 45px rgba(0, 0, 0, 0.04), ${shadowX * 1.5}px ${shadowY * 1.5}px 80px rgba(0, 0, 0, 0.02)` 
+              ? `${shadowX}px ${shadowY}px 45px rgba(0, 0, 0, 0.03), ${shadowX * 1.5}px ${shadowY * 1.5}px 80px rgba(0, 0, 0, 0.015)` 
               : undefined,
             transition: isHovered ? "none" : "transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.6s ease"
           }}
-          className="floating-letter-card w-full rounded-[24px] p-8 sm:p-12 md:p-16 relative flex flex-col justify-between overflow-hidden group"
+          className="floating-letter-card w-full rounded-[24px] sm:rounded-[32px] p-6 sm:p-10 md:p-14 relative flex flex-col justify-between overflow-hidden group"
         >
           {/* Subtle Mood Tint Overlay */}
-          {message.mood === "romantic" && <div className="absolute inset-0 bg-rose-400/[0.015] pointer-events-none -z-10" />}
-          {message.mood === "nostalgic" && <div className="absolute inset-0 bg-amber-400/[0.015] pointer-events-none -z-10" />}
-          {message.mood === "midnight" && <div className="absolute inset-0 bg-indigo-400/[0.015] pointer-events-none -z-10" />}
-          {message.mood === "healing" && <div className="absolute inset-0 bg-teal-400/[0.015] pointer-events-none -z-10" />}
-          {/* Subtle Hover Spotlight Glow */}
+          {message.mood === "romantic" && <div className="absolute inset-0 bg-rose-400/[0.012] pointer-events-none -z-10" />}
+          {message.mood === "nostalgic" && <div className="absolute inset-0 bg-amber-400/[0.012] pointer-events-none -z-10" />}
+          {message.mood === "midnight" && <div className="absolute inset-0 bg-indigo-400/[0.012] pointer-events-none -z-10" />}
+          {message.mood === "healing" && <div className="absolute inset-0 bg-teal-400/[0.012] pointer-events-none -z-10" />}
+          
+          {/* Subtle Spotlight glow on hover */}
           {isHovered && (
             <div 
-              className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-[24px]" 
+              className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-[32px]" 
               style={{ 
                 background: `radial-gradient(circle 240px at ${lightX}px ${lightY}px, rgba(255,255,255,0.06) 0%, transparent 80%)` 
               }} 
             />
           )}
 
-          {/* Letter Header & Music Stamp Wrapper */}
-          <div className="flex flex-col md:flex-row md:justify-between md:items-start w-full relative z-10">
-            {/* "To" Section */}
+          {/* Card Top Section */}
+          <div className="flex flex-col md:flex-row md:justify-between md:items-start w-full relative z-10 gap-4 mb-6">
+            {/* "To" Header */}
             {message.to ? (
               <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.8 }}
-                className="font-sans text-[10px] uppercase tracking-[0.25em] text-on-surface-variant/80 pb-4 md:pb-0 mb-6 md:mb-0 border-b md:border-b-0 border-outline-variant/30"
+                className="font-sans text-[10px] uppercase tracking-[0.25em] text-on-surface-variant/80 pb-3 md:pb-0 border-b md:border-b-0 border-outline-variant/15 w-full md:w-auto text-left"
               >
-                <span className="text-outline-variant mr-1">To:</span> {message.to}
+                <span className="text-outline-variant/80 mr-1">To:</span> {message.to}
               </motion.div>
             ) : (
               <div />
             )}
 
-            {/* Integrated Minimalist Music Postage Stamp */}
+            {/* Premium Integrated Music Postage player */}
             {message.music && (
               <motion.div 
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.1, duration: 0.8 }}
-                className="music-postage-stamp rounded-2xl p-3 flex items-center gap-3 shadow-[0_4px_20px_rgba(0,0,0,0.01)] w-full max-w-[280px] self-start md:self-end md:-mt-4 md:mb-6 mb-8 relative group/stamp overflow-hidden"
+                className="relative rounded-2xl p-3.5 flex items-center gap-3.5 bg-surface/50 border border-outline-variant/20 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.015)] w-full max-w-[280px] self-start md:self-end md:-mt-3 overflow-hidden"
               >
-                <div className="w-10 h-10 rounded-full overflow-hidden bg-stone-200/50 dark:bg-stone-800/50 flex-shrink-0 shadow-sm relative flex items-center justify-center">
+                {/* Blurred backdrop image glow */}
+                {message.music.artworkUrl && (
+                  <div 
+                    className="absolute -inset-4 bg-cover bg-center blur-xl opacity-15 pointer-events-none"
+                    style={{ backgroundImage: `url(${message.music.artworkUrl})` }}
+                  />
+                )}
+
+                <div className="w-10 h-10 rounded-full overflow-hidden bg-stone-200/50 dark:bg-stone-800/50 flex-shrink-0 shadow-md relative flex items-center justify-center border border-outline-variant/20">
                   {message.music.artworkUrl ? (
                     <img 
                       src={message.music.artworkUrl} 
                       alt={message.music.title} 
-                      className={`w-full h-full object-cover transition-transform duration-1000 ${isPlaying ? 'animate-spin [animation-duration:12s]' : ''}`} 
+                      className={`w-full h-full object-cover transition-transform duration-[12000ms] ease-linear ${isPlaying ? 'rotate-360 [animation-iteration-count:infinite] animate-spin' : ''}`} 
                     />
                   ) : (
-                    <Music size={16} className="text-tertiary" />
+                    <Music size={15} className="text-tertiary" />
                   )}
                   {isPlaying && (
                      <div className="absolute inset-0 bg-black/35 flex items-center justify-center backdrop-blur-[0.5px]">
@@ -264,28 +273,32 @@ export function MessageDetailView({ message }: { message: MessageData }) {
                   )}
                 </div>
                 
-                <div className="flex flex-col flex-grow min-w-0">
-                  <span className="font-sans font-semibold text-on-surface text-[11px] truncate leading-tight">{message.music.title}</span>
-                  <span className="font-sans text-on-surface-variant/80 text-[9px] truncate leading-tight mt-0.5">{message.music.artist}</span>
+                <div className="flex-grow min-w-0 z-10 text-left">
+                  <h4 className="text-[11px] font-bold text-on-surface truncate leading-snug">
+                    {message.music.title}
+                  </h4>
+                  <p className="font-sans text-[8px] text-on-surface-variant/80 uppercase tracking-widest truncate mt-0.5">
+                    {message.music.artist}
+                  </p>
                 </div>
 
                 {message.music.previewUrl && (
                   <button 
                     onClick={togglePlay}
-                    className="w-7 h-7 rounded-full bg-tertiary text-white flex items-center justify-center flex-shrink-0 hover:scale-105 active:scale-95 transition-all shadow-sm cursor-pointer"
+                    className="w-7 h-7 rounded-full bg-tertiary text-white flex items-center justify-center flex-shrink-0 hover:scale-105 active:scale-95 transition-all shadow-md cursor-pointer z-10"
                   >
                     {isPlaying ? (
-                      <div className="w-2 h-2 flex gap-[1.5px] justify-center items-center">
-                        <div className="w-[1.5px] h-[6px] bg-white rounded-sm" />
-                        <div className="w-[1.5px] h-[6px] bg-white rounded-sm" />
+                      <div className="w-2.5 h-2.5 flex gap-[1.5px] justify-center items-center">
+                        <div className="w-[1.8px] h-[7px] bg-white rounded-sm" />
+                        <div className="w-[1.8px] h-[7px] bg-white rounded-sm" />
                       </div>
                     ) : (
-                      <div className="w-0 h-0 border-t-[3.5px] border-t-transparent border-l-[6px] border-l-white border-b-[3.5px] border-b-transparent ml-0.5" />
+                      <div className="w-0 h-0 border-t-[3px] border-t-transparent border-l-[6.5px] border-l-white border-b-[3px] border-b-transparent ml-0.5" />
                     )}
                   </button>
                 )}
 
-                {/* Elegant bottom edge progress bar */}
+                {/* Bottom edge progress bar */}
                 {message.music.previewUrl && (
                   <div className="absolute bottom-0 left-0 w-full h-[1.5px] bg-tertiary/10">
                     <div 
@@ -308,57 +321,56 @@ export function MessageDetailView({ message }: { message: MessageData }) {
             )}
           </div>
 
-          {/* Letter Body content wrapper with staggered reveal */}
+          {/* Letter Content ruled sheet */}
           <motion.div 
             variants={containerVariants}
             initial="hidden"
             animate="visible"
             className="w-full relative z-10 flex flex-col justify-start"
           >
-            {/* Paragraphs rendering progressively */}
-            <div className="flex flex-col gap-6 md:gap-8 my-6 md:my-10 text-on-surface text-left">
+            {/* Paragraphs with custom line spacing on paper */}
+            <div className="flex flex-col gap-6 my-4 sm:my-8 text-on-surface text-left">
               {paragraphs.map((para, idx) => (
                 <motion.p 
                   key={idx}
                   variants={paragraphVariants}
-                  className="font-cormorant font-light text-[21px] sm:text-[23px] md:text-[25px] leading-relaxed md:leading-[1.8] tracking-wide text-justify antialiased whitespace-pre-wrap"
+                  className="font-cormorant font-light text-[18px] sm:text-[21px] md:text-[23px] leading-[1.8] md:leading-[2] tracking-wide text-justify antialiased whitespace-pre-wrap italic border-b border-dashed border-outline-variant/10 pb-4"
                 >
                   {para}
                 </motion.p>
               ))}
             </div>
 
-            {/* Soft poetic divider line */}
+            {/* Signature divider */}
             <motion.div 
               variants={paragraphVariants}
-              className="w-12 h-[1px] bg-outline-variant/35 my-8 mx-auto"
+              className="w-10 h-[1px] bg-outline-variant/30 my-6 sm:my-8 mx-auto"
             />
 
-            {/* Author & Signature section */}
+            {/* Author Section */}
             <motion.div 
               variants={paragraphVariants}
-              className="flex flex-col items-center gap-6"
+              className="flex flex-col items-center gap-2"
             >
-              <div className="flex flex-col items-center gap-1.5">
-                <span className="font-sans text-[9px] uppercase tracking-[0.25em] text-outline-variant/80">
+              <div className="flex flex-col items-center gap-1">
+                <span className="font-sans text-[8px] sm:text-[9px] uppercase tracking-[0.25em] text-outline-variant/80">
                   With warmth,
                 </span>
-                <span className="font-cormorant italic text-[24px] sm:text-[26px] md:text-[28px] text-on-surface font-medium">
+                <span className="font-cormorant italic text-xl sm:text-2xl text-on-surface font-medium">
                   {message.author}
                 </span>
               </div>
-
-              <div className="font-sans text-[9px] uppercase tracking-[0.2em] text-on-surface-variant/60">
+              <div className="font-sans text-[8px] sm:text-[9px] uppercase tracking-[0.2em] text-on-surface-variant/60">
                 {message.dateDetail || message.date}
               </div>
             </motion.div>
 
-            {/* Cinematic Ending Phrase */}
+            {/* Poetic closing seal */}
             <motion.div 
               variants={paragraphVariants}
-              className="mt-12 text-center"
+              className="mt-10 sm:mt-12 text-center"
             >
-              <p className="font-cormorant italic text-xs sm:text-sm tracking-[0.2em] text-on-surface-variant/65 font-light select-none">
+              <p className="font-cormorant italic text-[11px] sm:text-xs tracking-[0.2em] text-on-surface-variant/65 font-light select-none">
                 “This message was sent with love.”
               </p>
             </motion.div>
@@ -366,12 +378,12 @@ export function MessageDetailView({ message }: { message: MessageData }) {
         </div>
       </motion.div>
 
-      {/* Share/Actions Capsule floating below the card */}
+      {/* Floating share capsule */}
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.9, duration: 1 }}
-        className="flex justify-center gap-4 mt-10 relative z-10"
+        className="flex justify-center gap-4 mt-8 relative z-10 pb-16"
       >
         <button 
           onClick={async () => {
@@ -391,10 +403,10 @@ export function MessageDetailView({ message }: { message: MessageData }) {
               alert("Tautan berhasil disalin!");
             }
           }}
-          className="flex items-center gap-2 font-sans text-[11px] font-bold text-on-surface-variant/80 hover:text-on-surface transition-colors uppercase tracking-widest bg-surface-container/30 backdrop-blur-sm border border-outline/20 px-5 py-2.5 rounded-full shadow-sm hover:shadow transition-all duration-300 cursor-pointer"
+          className="flex items-center gap-2 font-sans text-[10px] font-bold text-on-surface-variant/85 hover:text-on-surface transition-all uppercase tracking-widest bg-surface/50 backdrop-blur-sm border border-outline-variant/30 px-6 py-3 rounded-full shadow-sm hover:shadow hover:bg-surface transition-all duration-300 cursor-pointer"
         >
-          <Share2 size={13} />
-          Bagikan
+          <Share2 size={12} />
+          Bagikan Pesan
         </button>
       </motion.div>
     </div>

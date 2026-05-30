@@ -132,3 +132,106 @@ body.theme-rain .music-postage-stamp {
   background-color: rgba(255, 255, 255, 0.15);
 }
 
+/* --- Mobile Redesign System CSS Extensions --- */
+
+/* Breathing atmospheric background glows */
+@keyframes ambientGlowPulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    opacity: 0.85;
+    filter: blur(140px) saturate(1.1);
+  }
+  50% {
+    transform: translate(-50%, -52%) scale(1.12) rotate(180deg);
+    opacity: 0.98;
+    filter: blur(160px) saturate(1.3);
+  }
+}
+
+.ambient-glowing-light {
+  animation: ambientGlowPulse 15s ease-in-out infinite alternate;
+}
+
+/* Image overlay mood card structures */
+.mood-card-bg {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mood-card-romantic {
+  background-image: linear-gradient(to bottom, rgba(251, 113, 133, 0.08), rgba(248, 245, 242, 0.94)), url('/mood_romantic.png');
+}
+.mood-card-nostalgic {
+  background-image: linear-gradient(to bottom, rgba(245, 158, 11, 0.08), rgba(248, 245, 242, 0.94)), url('/mood_nostalgic.png');
+}
+.mood-card-healing {
+  background-image: linear-gradient(to bottom, rgba(20, 184, 166, 0.08), rgba(248, 245, 242, 0.94)), url('/mood_healing.png');
+}
+.mood-card-midnight {
+  background-image: linear-gradient(to bottom, rgba(99, 102, 241, 0.08), rgba(248, 245, 242, 0.94)), url('/mood_midnight.png');
+}
+.mood-card-letters {
+  background-image: linear-gradient(to bottom, rgba(113, 90, 72, 0.08), rgba(248, 245, 242, 0.94)), url('/mood_letters.png');
+}
+
+/* Night theme variants for image overlays */
+body.theme-night .mood-card-romantic {
+  background-image: linear-gradient(to bottom, rgba(251, 113, 133, 0.05), rgba(23, 21, 19, 0.94)), url('/mood_romantic.png');
+}
+body.theme-night .mood-card-nostalgic {
+  background-image: linear-gradient(to bottom, rgba(245, 158, 11, 0.05), rgba(23, 21, 19, 0.94)), url('/mood_nostalgic.png');
+}
+body.theme-night .mood-card-healing {
+  background-image: linear-gradient(to bottom, rgba(20, 184, 166, 0.05), rgba(23, 21, 19, 0.94)), url('/mood_healing.png');
+}
+body.theme-night .mood-card-midnight {
+  background-image: linear-gradient(to bottom, rgba(99, 102, 241, 0.05), rgba(23, 21, 19, 0.94)), url('/mood_midnight.png');
+}
+body.theme-night .mood-card-letters {
+  background-image: linear-gradient(to bottom, rgba(113, 90, 72, 0.05), rgba(23, 21, 19, 0.94)), url('/mood_letters.png');
+}
+
+/* Rain theme variants for image overlays */
+body.theme-rain .mood-card-romantic,
+body.theme-rain .mood-card-nostalgic,
+body.theme-rain .mood-card-healing,
+body.theme-rain .mood-card-midnight,
+body.theme-rain .mood-card-letters {
+  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.05), rgba(211, 221, 232, 0.94)), url('/mood_letters.png');
+}
+
+body.theme-night.theme-rain .mood-card-romantic,
+body.theme-night.theme-rain .mood-card-nostalgic,
+body.theme-night.theme-rain .mood-card-healing,
+body.theme-night.theme-rain .mood-card-midnight,
+body.theme-night.theme-rain .mood-card-letters {
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.05), rgba(15, 23, 42, 0.94)), url('/mood_letters.png');
+}
+
+/* Physical stationery letter pad lines and typing zone */
+.letter-textarea {
+  border: none !important;
+  background: transparent !important;
+  outline: none !important;
+  box-shadow: none !important;
+  line-height: 2.2 !important;
+  font-family: var(--font-cormorant), "Cormorant Garamond", serif !important;
+  font-size: 1.25rem !important;
+  font-style: italic !important;
+  color: var(--color-on-surface) !important;
+  background-attachment: local;
+  background-image: linear-gradient(to bottom, transparent 96%, rgba(113, 90, 72, 0.12) 98%);
+  background-size: 100% 2.2em;
+}
+
+body.theme-night .letter-textarea {
+  background-image: linear-gradient(to bottom, transparent 96%, rgba(168, 148, 130, 0.15) 98%);
+}
+
+body.theme-rain .letter-textarea {
+  background-image: linear-gradient(to bottom, transparent 96%, rgba(255, 255, 255, 0.15) 98%);
+}
+
+
