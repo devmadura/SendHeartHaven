@@ -89,6 +89,26 @@ export function ComposeView() {
   // Emotional Mood State
   const [selectedMood, setSelectedMood] = useState<MoodType>("soft");
 
+  // Time Capsule (Buka Nanti) States
+  const [isScheduled, setIsScheduled] = useState(false);
+  const [scheduledDate, setScheduledDate] = useState("");
+  const [scheduledTime, setScheduledTime] = useState("");
+  const [unlockAt, setUnlockAt] = useState("");
+
+  useEffect(() => {
+    if (isScheduled && scheduledDate && scheduledTime) {
+      const localDateTimeStr = `${scheduledDate}T${scheduledTime}`;
+      const localDate = new Date(localDateTimeStr);
+      if (!isNaN(localDate.getTime())) {
+        setUnlockAt(localDate.toISOString());
+      } else {
+        setUnlockAt("");
+      }
+    } else {
+      setUnlockAt("");
+    }
+  }, [isScheduled, scheduledDate, scheduledTime]);
+
   // Audio Preview States
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -149,6 +169,18 @@ export function ComposeView() {
     if (!content || !content.trim()) {
       showToast("Pesan hatimu masih kosong, ceritakanlah sesuatu.", "error");
       return;
+    }
+
+    if (isScheduled) {
+      if (!scheduledDate || !scheduledTime) {
+        showToast("Tolong tentukan tanggal dan waktu pembukaan pesan, ya.", "error");
+        return;
+      }
+      const selectedUnlock = new Date(`${scheduledDate}T${scheduledTime}`);
+      if (isNaN(selectedUnlock.getTime()) || selectedUnlock <= new Date()) {
+        showToast("Waktu pelepasan pesan harus di masa depan, ya.", "error");
+        return;
+      }
     }
 
     // Client-side bad words filter
@@ -521,6 +553,107 @@ export function ComposeView() {
                 placeholder="Nama Anda atau inisial (misal: Pengagum Rahasia, Anonim...)"
                 className="bg-transparent border-0 border-b border-outline-variant/30 focus:border-tertiary focus:ring-0 px-0 py-2 text-sm sm:text-base font-cormorant italic transition-colors rounded-none outline-none text-on-surface placeholder:text-on-surface-variant/40"
               />
+            </div>
+
+            {/* Kapsul Waktu / Open Later Scheduler */}
+            <div className="flex flex-col gap-3.5 text-left border-t border-b border-outline-variant/15 py-6">
+              <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-0.5">
+                  <span className="font-sans text-[8px] text-outline-variant uppercase tracking-[0.2em] font-bold">
+                    Buka Nanti
+                  </span>
+                  <span className="font-cormorant italic text-[13px] text-on-surface-variant font-light">
+                    {isScheduled ? "Pesan ini akan menunggu dengan sabar." : "Ingin menyimpan pesan ini untuk nanti?"}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsScheduled(!isScheduled)}
+                  className={`relative w-11 h-6 rounded-full transition-colors duration-500 cursor-pointer ${
+                    isScheduled ? "bg-tertiary" : "bg-outline-variant/30"
+                  }`}
+                >
+                  <motion.div
+                    layout
+                    className="absolute top-1 left-1 w-4 h-4 rounded-full bg-white flex items-center justify-center shadow-sm"
+                    animate={{ x: isScheduled ? 20 : 0 }}
+                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  >
+                    {isScheduled ? (
+                      <Moon size={8} className="text-tertiary" />
+                    ) : (
+                      <Feather size={8} className="text-outline-variant" />
+                    )}
+                  </motion.div>
+                </button>
+              </div>
+
+              <AnimatePresence>
+                {isScheduled && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                    animate={{ opacity: 1, height: "auto", marginTop: 12 }}
+                    exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                    transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    className="overflow-hidden"
+                  >
+                    <div className="relative rounded-2xl p-5 border border-outline-variant/20 bg-surface-container-low/40 backdrop-blur-sm flex flex-col gap-4 shadow-sm overflow-hidden select-none">
+                      {/* Ambient soft glow background */}
+                      <div className="absolute -right-8 -bottom-8 w-28 h-28 bg-amber-500/5 rounded-full blur-2xl pointer-events-none" />
+                      <div className="absolute -left-8 -top-8 w-28 h-28 bg-indigo-500/5 rounded-full blur-2xl pointer-events-none" />
+
+                      {/* Sparkles / Moon decorative element */}
+                      <div className="flex items-start gap-2.5 relative z-10">
+                        <div className="p-2 rounded-full border border-tertiary/10 bg-tertiary/5 text-tertiary shrink-0 animate-pulse">
+                          <Moon size={12} />
+                        </div>
+                        <p className="font-sans text-[10px] leading-relaxed text-on-surface-variant/80 italic">
+                          Some words are meant for later. Choose the moment this message should arrive.
+                        </p>
+                      </div>
+
+                      {/* Date & Time Inputs */}
+                      <div className="grid grid-cols-2 gap-4 relative z-10">
+                        <div className="flex flex-col gap-1.5">
+                          <label className="font-sans text-[7px] text-outline-variant uppercase tracking-wider font-bold">
+                            Pilih Tanggal
+                          </label>
+                          <input
+                            type="date"
+                            value={scheduledDate}
+                            min={new Date().toISOString().split("T")[0]}
+                            onChange={(e) => setScheduledDate(e.target.value)}
+                            required={isScheduled}
+                            className="w-full bg-surface/50 border border-outline-variant/30 focus:border-tertiary focus:ring-1 focus:ring-tertiary/10 px-3.5 py-2.5 rounded-xl text-xs font-sans text-on-surface outline-none transition-all placeholder:text-on-surface-variant/30 cursor-pointer"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                          <label className="font-sans text-[7px] text-outline-variant uppercase tracking-wider font-bold">
+                            Pilih Waktu
+                          </label>
+                          <input
+                            type="time"
+                            value={scheduledTime}
+                            onChange={(e) => setScheduledTime(e.target.value)}
+                            required={isScheduled}
+                            className="w-full bg-surface/50 border border-outline-variant/30 focus:border-tertiary focus:ring-1 focus:ring-tertiary/10 px-3.5 py-2.5 rounded-xl text-xs font-sans text-on-surface outline-none transition-all placeholder:text-on-surface-variant/30 cursor-pointer"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Star particles detail decoration */}
+                      <div className="flex justify-between items-center text-[8px] text-outline-variant/75 border-t border-outline-variant/10 pt-3 relative z-10 font-sans italic">
+                        <span className="flex items-center gap-1">
+                          <Sparkles size={8} className="text-amber-400" />
+                          This message will wait patiently.
+                        </span>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <input type="hidden" name="unlockAt" value={unlockAt} />
             </div>
 
             {/* Turnstile Security and Submit button */}

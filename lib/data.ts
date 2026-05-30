@@ -14,7 +14,10 @@ export interface MessageData {
   };
   author: string;
   date: string;
-  dateDetail?: string;
+  dateDetail: string;
+  isTimeCapsule?: boolean;
+  unlockAt?: string;
+  isLocked?: boolean;
 }
 
 function formatLibraryDate(dateString: string): string {
@@ -44,10 +47,27 @@ function formatDetailDate(dateString: string): string {
 }
 
 function mapToMessageData(dbMessage: any): MessageData {
+  let isTimeCapsule = false;
+  let unlockAt: string | undefined = undefined;
+  let isLocked = false;
+  let content = dbMessage.content;
+
+  if (dbMessage.content && dbMessage.content.trim().startsWith('{"version":"v1","type":"time_capsule"')) {
+    try {
+      const parsed = JSON.parse(dbMessage.content);
+      isTimeCapsule = true;
+      unlockAt = parsed.unlockAt;
+      content = parsed.content;
+      isLocked = new Date() < new Date(parsed.unlockAt);
+    } catch (e) {
+      console.error("Failed to parse time capsule message:", e);
+    }
+  }
+
   return {
     id: dbMessage.id,
     to: dbMessage.to || undefined,
-    content: dbMessage.content,
+    content: content,
     mood: dbMessage.mood || undefined,
     author: dbMessage.author || "Anonim",
     date: formatLibraryDate(dbMessage.createdAt),
@@ -58,7 +78,10 @@ function mapToMessageData(dbMessage: any): MessageData {
       artist: dbMessage.musicArtist,
       previewUrl: dbMessage.musicPreviewUrl || undefined,
       artworkUrl: dbMessage.musicArtworkUrl || undefined,
-    } : undefined
+    } : undefined,
+    isTimeCapsule,
+    unlockAt,
+    isLocked
   };
 }
 

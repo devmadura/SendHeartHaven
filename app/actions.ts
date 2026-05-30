@@ -66,10 +66,21 @@ export async function submitMessage(formData: FormData) {
     }
   }
 
+  const unlockAt = formData.get("unlockAt") as string;
+  let finalContent = content;
+  if (unlockAt) {
+    finalContent = JSON.stringify({
+      version: "v1",
+      type: "time_capsule",
+      unlockAt,
+      content
+    });
+  }
+
   const { data, error } = await supabase.from("messages").insert([
     {
       to: to || null,
-      content,
+      content: finalContent,
       mood: mood || "soft",
       author: author || "Anonim",
       musicId: musicData?.id || null,
