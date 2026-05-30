@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import Link from "next/link";
-import { Search, Heart, Sparkles, Coffee, Moon, Feather } from "lucide-react";
+import { Search, Heart, Sparkles, Coffee, Moon, Feather, Lock } from "lucide-react";
 import { MessageData } from "@/lib/data";
 
 // Soft floating particles inside the hero background
@@ -56,6 +56,14 @@ function FloatingParticles() {
 export function HomeView({ messages }: { messages: MessageData[] }) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
+
+  const moodGlows: Record<string, string> = {
+    romantic: "shadow-[0_0_30px_rgba(251,113,133,0.06)] border-rose-400/20 bg-rose-50/40 dark:bg-rose-950/5",
+    nostalgic: "shadow-[0_0_30px_rgba(245,158,11,0.06)] border-amber-400/20 bg-amber-50/40 dark:bg-amber-950/5",
+    healing: "shadow-[0_0_30px_rgba(20,184,166,0.06)] border-teal-400/20 bg-teal-50/40 dark:bg-teal-950/5",
+    midnight: "shadow-[0_0_30px_rgba(99,102,241,0.06)] border-indigo-400/20 bg-indigo-50/40 dark:bg-indigo-950/5",
+    soft: "shadow-[0_0_30px_rgba(113,90,72,0.06)] border-outline-variant/20 bg-stone-50/40 dark:bg-stone-900/5",
+  };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -267,34 +275,70 @@ export function HomeView({ messages }: { messages: MessageData[] }) {
               className={`${idx === 2 ? "md:col-span-2 md:w-[75%] md:mx-auto" : "col-span-1"}`}
             >
               <Link href={`/library/${msg.id}`} className="block h-full">
-                <div className="floating-letter-card rounded-[22px] sm:rounded-[28px] p-6 sm:p-8 flex flex-col justify-between gap-6 hover:-translate-y-1.5 hover:shadow-[0_12px_28px_rgba(0,0,0,0.02)] transition-all duration-500 ease-out border border-outline-variant/15 h-full">
-                  <div className="flex justify-between items-start w-full font-sans text-[8px] sm:text-[9px] uppercase tracking-widest text-on-surface-variant/60 border-b border-outline-variant/15 pb-4">
-                    <span className="flex items-center gap-2">
-                      <span>To: {msg.to || "Seseorang"}</span>
-                      {msg.mood && msg.mood !== "soft" && (
-                        <span className={`px-2 py-0.5 rounded-full border text-[7px] font-bold tracking-wider ${msg.mood === "romantic" ? "text-rose-400 border-rose-400/20 bg-rose-400/5" :
-                            msg.mood === "nostalgic" ? "text-amber-400 border-amber-400/20 bg-amber-400/5" :
-                              msg.mood === "midnight" ? "text-indigo-400 border-indigo-400/20 bg-indigo-400/5" :
-                                msg.mood === "healing" ? "text-teal-400 border-teal-400/20 bg-teal-400/5" :
-                                  msg.mood === "letters-never-sent" ? "text-stone-500 border-stone-500/20 bg-stone-500/5" :
-                                    "text-stone-400 border-stone-400/20 bg-stone-400/5"
-                          }`}>
-                          {msg.mood === "letters-never-sent" ? "letters" : msg.mood}
-                        </span>
-                      )}
-                    </span>
-                    <span>{msg.date}</span>
-                  </div>
+                {msg.isLocked ? (
+                  <div className={`floating-letter-card rounded-[22px] sm:rounded-[28px] p-6 sm:p-8 flex flex-col justify-between gap-6 hover:-translate-y-1.5 hover:shadow-[0_12px_28px_rgba(0,0,0,0.02)] transition-all duration-500 ease-out border h-full relative overflow-hidden ${moodGlows[msg.mood || "soft"] || moodGlows.soft}`}>
+                    {/* Ambient Spotlight / Atmospheric lighting overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-surface-container-low/20 to-transparent pointer-events-none" />
 
-                  <p className="font-cormorant font-light text-[17px] sm:text-xl text-on-surface leading-relaxed text-justify line-clamp-4 italic antialiased whitespace-pre-wrap">
-                    "{msg.content}"
-                  </p>
+                    <div className="flex justify-between items-center w-full font-sans text-[8px] sm:text-[9px] uppercase tracking-widest text-on-surface-variant/40 border-b border-outline-variant/15 pb-4 relative z-10">
+                      <span className="flex items-center gap-2">
+                        <div className="p-1 rounded-full bg-outline-variant/10 text-outline border border-outline-variant/20">
+                          <Lock size={10} />
+                        </div>
+                        <span className="font-semibold text-on-surface-variant/60 font-sans">Untuk: {msg.to || "Seseorang"}</span>
+                      </span>
+                      <span className="font-medium tracking-wider text-outline-variant font-sans">Locked Capsule</span>
+                    </div>
 
-                  <div className="flex justify-between items-center w-full font-sans text-[8px] sm:text-[9px] uppercase tracking-widest text-outline-variant border-t border-outline-variant/15 pt-4 mt-2">
-                    <span>From: {msg.author}</span>
-                    {msg.music && <span className="flex items-center gap-1.5 text-tertiary"><Moon size={10} className="animate-pulse" /> Music</span>}
+                    <div className="relative py-4 flex flex-col items-center justify-center min-h-[100px] z-10 select-none">
+                      <p className="font-cormorant font-light text-[17px] sm:text-xl leading-relaxed text-on-surface/20 text-justify italic antialiased blur-md select-none w-full px-1">
+                        "Mungkin jarak hanya menguji seberapa kuat ingatan kita bertahan. Pada akhirnya, yang tersisa hanyalah kata-kata yang pernah kita ucapkan di bawah..."
+                      </p>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="p-3 rounded-full bg-surface/80 dark:bg-stone-900/80 border border-outline-variant/35 shadow-md text-tertiary flex items-center justify-center">
+                          <Lock size={16} />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-between items-center w-full font-sans text-[8px] sm:text-[9px] uppercase tracking-widest text-outline-variant/65 border-t border-outline-variant/15 pt-4 mt-2 relative z-10">
+                      <span className="font-sans">Dari: {msg.author}</span>
+                      <span className="flex items-center gap-1.5 text-amber-500/80 font-bold tracking-widest font-sans">
+                        <Sparkles size={10} className="animate-spin [animation-duration:10s]" />
+                        Time Capsule
+                      </span>
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="floating-letter-card rounded-[22px] sm:rounded-[28px] p-6 sm:p-8 flex flex-col justify-between gap-6 hover:-translate-y-1.5 hover:shadow-[0_12px_28px_rgba(0,0,0,0.02)] transition-all duration-500 ease-out border border-outline-variant/15 h-full">
+                    <div className="flex justify-between items-start w-full font-sans text-[8px] sm:text-[9px] uppercase tracking-widest text-on-surface-variant/60 border-b border-outline-variant/15 pb-4">
+                      <span className="flex items-center gap-2">
+                        <span>To: {msg.to || "Seseorang"}</span>
+                        {msg.mood && msg.mood !== "soft" && (
+                          <span className={`px-2 py-0.5 rounded-full border text-[7px] font-bold tracking-wider ${msg.mood === "romantic" ? "text-rose-400 border-rose-400/20 bg-rose-400/5" :
+                              msg.mood === "nostalgic" ? "text-amber-400 border-amber-400/20 bg-amber-400/5" :
+                                msg.mood === "midnight" ? "text-indigo-400 border-indigo-400/20 bg-indigo-400/5" :
+                                  msg.mood === "healing" ? "text-teal-400 border-teal-400/20 bg-teal-400/5" :
+                                    msg.mood === "letters-never-sent" ? "text-stone-500 border-stone-500/20 bg-stone-500/5" :
+                                      "text-stone-400 border-stone-400/20 bg-stone-400/5"
+                            }`}>
+                            {msg.mood === "letters-never-sent" ? "letters" : msg.mood}
+                          </span>
+                        )}
+                      </span>
+                      <span>{msg.date}</span>
+                    </div>
+
+                    <p className="font-cormorant font-light text-[17px] sm:text-xl text-on-surface leading-relaxed text-justify line-clamp-4 italic antialiased whitespace-pre-wrap">
+                      "{msg.content}"
+                    </p>
+
+                    <div className="flex justify-between items-center w-full font-sans text-[8px] sm:text-[9px] uppercase tracking-widest text-outline-variant border-t border-outline-variant/15 pt-4 mt-2">
+                      <span>From: {msg.author}</span>
+                      {msg.music && <span className="flex items-center gap-1.5 text-tertiary"><Moon size={10} className="animate-pulse" /> Music</span>}
+                    </div>
+                  </div>
+                )}
               </Link>
             </motion.div>
           ))}

@@ -272,7 +272,7 @@ export function ComposeView() {
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
             className={`fixed top-8 left-1/2 -translate-x-1/2 z-[100] px-6 py-4 rounded-xl shadow-lg border flex items-center gap-3 backdrop-blur-md font-sans tracking-wide ${toast.type === "error"
               ? "bg-red-50/90 border-red-200 text-red-800 shadow-red-500/10"
-              : "bg-stone-50/90 border-tertiary/30 text-on-surface shadow-tertiary/10"
+              : "bg-surface/90 border-outline-variant/50 text-on-surface shadow-tertiary/10"
               }`}
           >
             {toast.type === "error" ? (
